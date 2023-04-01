@@ -23,7 +23,8 @@ async function refreshToken() {
     try {
         const token = await spotify.refreshAccessToken();
         spotify.setAccessToken(token.body.access_token);
-    } catch (_) {
+    } catch (e) {
+        console.log(e);
         refreshToken();
     }
 }
@@ -37,7 +38,9 @@ async function main() {
 
             await autoVolume();
         }
-    } catch (_) {}
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 async function autoVolume() {
