@@ -54,7 +54,9 @@ async function autoVolume() {
 
 const app = express();
 
-app.get("/api/setvolume/:volume", (req: Request, res: Response) => {
+app.use(express.static("src/public"));
+
+app.post("/api/volume/:volume", (req: Request, res: Response) => {
     if (isNaN(Number(req.params.volume))) {
         return res.end("Not a number");
     }
@@ -64,7 +66,11 @@ app.get("/api/setvolume/:volume", (req: Request, res: Response) => {
 
     autoVolume();
 
-    res.end(`Average volume updated to ${req.params.volume}%`);
+    res.end(`Average volume updated to ${req.params.volume}`);
+});
+
+app.get("/api/volume", (req: Request, res: Response) => {
+    res.end(average_volume.toString());
 });
 
 if (fs.existsSync("TOKEN") || process.env.SPOTIFY_REFRESH) {

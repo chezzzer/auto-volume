@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Auto Volume Controller</title>
+        <style>
+            body {
+                font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+                    "Helvetica Neue", sans-serif;
+                padding: 0;
+                margin: 0;
+            }
+
+            * {
+                overflow: hidden;
+            }
+
+            .volume {
+                width: 100%;
+            }
+
+            .slider {
+                -webkit-appearance: none; /* Override default CSS styles */
+                appearance: none;
+                width: 100%; /* Full-width */
+                height: 225px; /* Specified height */
+                background: #d3d3d3; /* Grey background */
+                outline: none; /* Remove outline */
+            }
+
+            /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+            .slider::-webkit-slider-thumb {
+                -webkit-appearance: none; /* Override default look */
+                appearance: none;
+                width: 100px; /* Set a specific slider handle width */
+                height: 225px; /* Slider handle height */
+                background: #000000; /* Green background */
+                cursor: pointer; /* Cursor on hover */
+            }
+
+            .display {
+                font-size: 30vw;
+                margin: 0;
+                text-align: center;
+                line-height: 25vw;
+                pointer-events: none;
+            }
+
+            .label {
+                font-size: 30px;
+                margin: 0;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="volume">
+            <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                id="volume"
+                class="slider"
+            />
+            <h4 class="label">VOLUME</h4>
+            <h1 class="display"></h1>
+        </div>
+
+        <script>
+            const display = document.querySelector(".display");
+            const slider = document.querySelector(".slider");
+
+            fetch("/api/volume/").then(async (res) => {
+                const volume = await res.text();
+
+                display.innerHTML = Number(volume) * 100 + "%";
+                slider.value = volume;
+            });
+
+            slider.addEventListener("input", () => {
+                display.innerHTML =
+                    (Number(slider.value) * 100).toFixed(0) + "%";
+            });
+
+            slider.addEventListener("change", () => {
+                fetch(`/api/volume/${slider.value}`, {
+                    method: "POST",
+                });
+            });
+        </script>
+    </body>
+</html>
