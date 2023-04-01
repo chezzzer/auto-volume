@@ -74,12 +74,20 @@
             const display = document.querySelector(".display");
             const slider = document.querySelector(".slider");
 
-            fetch("/api/volume/").then(async (res) => {
-                const volume = await res.text();
+            function fetchVolume() {
+                fetch("/api/volume/").then(async (res) => {
+                    const volume = await res.text();
 
-                display.innerHTML = Number(volume) * 100 + "%";
-                slider.value = volume;
-            });
+                    display.innerHTML = Number(volume) * 100 + "%";
+                    slider.value = volume;
+                });
+            }
+
+            fetchVolume();
+
+            setInterval(() => {
+                fetchVolume();
+            }, 60 * 1_000);
 
             slider.addEventListener("input", () => {
                 display.innerHTML =
