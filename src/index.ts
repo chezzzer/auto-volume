@@ -4,6 +4,7 @@ import Spotify from "spotify-web-api-node";
 import open from "open";
 import "dotenv/config";
 import { Track } from "spotify-types";
+import path from "path";
 
 if (!fs.existsSync("VOLUME")) {
     fs.writeFileSync("VOLUME", "0.3", "utf-8");
@@ -54,7 +55,7 @@ async function autoVolume() {
 
 const app = express();
 
-app.use(express.static("src/public"));
+app.use(express.static(path.join(path.resolve(), "src/public")));
 
 app.post("/api/volume/:volume", (req: Request, res: Response) => {
     if (isNaN(Number(req.params.volume))) {
@@ -82,12 +83,12 @@ if (fs.existsSync("TOKEN") || process.env.SPOTIFY_REFRESH) {
     setInterval(refreshToken, 59 * 60 * 1000);
     setInterval(main, 1 * 1000);
 } else {
-    open(
-        spotify.createAuthorizeURL(
-            ["user-modify-playback-state", "user-read-playback-state"],
-            "g3yb8547g485"
-        )
+    const url = spotify.createAuthorizeURL(
+        ["user-modify-playback-state", "user-read-playback-state"],
+        "g3yb8547g485"
     );
+    open(url);
+    console.log(url);
 
     app.get("/api/callback", async (req: Request, res: Response) => {
         const auth = await spotify.authorizationCodeGrant(
